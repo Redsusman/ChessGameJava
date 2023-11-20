@@ -86,11 +86,12 @@ public class Piece {
             // UnsupportedAudioFileException e) {
             // e.printStackTrace();
             // }
-            board.capturedPieces.push(new Pair<>(board.returnIndexes(targetSquare, board)[1],
-                    board.returnIndexes(targetSquare, board)[0], board.getFlagIndivSquare(targetSquare)));
             updateMaterial(board.getFlagIndivSquare(targetSquare), board.getFlagIndivSquare(initialSquare).color);
             targetSquare.remove(0);
+            board.capturedPieces.push(new Pair<>(board.returnIndexes(targetSquare, board)[1],
+                    board.returnIndexes(targetSquare, board)[0], board.getFlagIndivSquare(targetSquare)));
             moveTo(initialSquare, targetSquare, board);
+            
         } else if (targetSquare.getComponentCount() == 0) {
             // try {
             // playSound("imageFolder/351518__mh2o__chess_move_on_alabaster.wav");

@@ -75,6 +75,65 @@ public class Engine {
         }
     }
 
+    public Pair<JButton, JButton, Double> minimaxList(Board board, int depth, double alpha, double beta,
+    boolean maximizingPlayer, List<JButton> pieces) {
+if (depth == 0) {
+    return new Pair<>(null, null, evaluate(board));
+}
+if (maximizingPlayer) {
+    double maxEval = Double.NEGATIVE_INFINITY;
+    JButton bestMove = null;
+    JButton correspondingPiece = null;
+    for (var piece : pieces) {
+        List<JButton> moves = Piece.generateMoves(piece, board);
+        for (var move : moves) {
+            board.storedMoves.push(piece);
+            board.storedMoves.push(move);
+            Piece.finalMoveGeneration(piece, move, board);
+            double v = minimax(board, depth - 1, alpha, beta, false).d;
+            // maxEval = Math.max(maxEval, v);
+            if (v > maxEval) {
+                maxEval = v;
+                correspondingPiece = piece;
+                bestMove = move;
+            }
+            Piece.unmakeMove(board);
+            alpha = Math.max(alpha, v);
+            if (beta <= alpha) {
+                break;
+            }
+        }
+    }
+
+    return new Pair<>(correspondingPiece, bestMove, maxEval);
+} else {
+    double minEval = Double.POSITIVE_INFINITY;
+    JButton bestMove = null;
+    JButton correspondingPiece = null;
+    for (var piece : pieces) {
+        List<JButton> moves = Piece.generateMoves(piece, board);
+        for (var move : moves) {
+            board.storedMoves.push(piece);
+            board.storedMoves.push(move);
+            Piece.finalMoveGeneration(piece, move, board);
+            double v = minimax(board, depth - 1, alpha, beta, true).d;
+            // minEval = Math.min(minEval, v);
+            if (v < minEval) {
+                minEval = v;
+                bestMove = move;
+                correspondingPiece = piece;
+            }
+            Piece.unmakeMove(board);
+            beta = Math.min(beta, v);
+            if (beta <= alpha) {
+                break;
+            }
+        }
+    }
+    return new Pair<>(correspondingPiece, bestMove, minEval);
+}
+}
+
    
 
     public List<JButton> moveOrderMoves(Color color, Board board) {
@@ -182,6 +241,18 @@ public class Engine {
         }
     
         return numPositions;
+    }
+
+    public double evaluateTwice(Board board) {
+        double whiteVal = 0;
+        double blackVal = 0;
+        if (Piece.WHITE_MATERIAL > Piece.BLACK_MATERIAL) {
+            whiteVal += Math.abs(Piece.WHITE_MATERIAL - Piece.BLACK_MATERIAL);
+        } else {
+            blackVal -= Math.abs(Piece.BLACK_MATERIAL - Piece.WHITE_MATERIAL);
+        }
+
+        return (whiteVal/2) + (blackVal/2);
     }
     
     
