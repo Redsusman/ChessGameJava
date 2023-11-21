@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class Piece {
     public static final int[][] QUEEN_SHIFTS = { { 0, -1 }, { -1, 0 }, { 0, 1 }, { 1, 0 }, { -1, 1 }, { -1, -1 },
             { 1, -1 }, { 1, 1 } };
 
-    public static List<int[]> storedMoves = new ArrayList<>();
+    // public static List<int[]> storedMoves = new ArrayList<>();
 
     public Piece(PieceType type) {
 
@@ -90,6 +91,8 @@ public class Piece {
             targetSquare.remove(0);
             board.capturedPieces.push(new Pair<>(board.returnIndexes(targetSquare, board)[1],
                     board.returnIndexes(targetSquare, board)[0], board.getFlagIndivSquare(targetSquare)));
+            //         board.storedMoves.push(initialSquare);
+            // board.storedMoves.push(targetSquare);
             moveTo(initialSquare, targetSquare, board);
             
         } else if (targetSquare.getComponentCount() == 0) {
@@ -99,6 +102,8 @@ public class Piece {
             // UnsupportedAudioFileException e) {
             // e.printStackTrace();
             // }
+            // board.storedMoves.push(initialSquare);
+            // board.storedMoves.push(targetSquare);
             moveTo(initialSquare, targetSquare, board);
         } else {
             return;
@@ -613,6 +618,35 @@ public class Piece {
             }
         }
         return ret;
+    }
+
+    public static List<Move> getMoves(Board board) {
+        List<Move> ret = Collections.synchronizedList(new LinkedList<>());
+        List<JButton> pieces = board.getPieces(board);
+        for(var piece : pieces) {
+            List<JButton> moves = Piece.generateMoves(piece, board);
+            for(var move : moves) {
+                ret.add(new Move(piece,move));
+            }
+        }
+        return ret;
+    }
+
+    public static List<Move> getColorMoves(Board board, Color color) {
+        List<Move> ret = Collections.synchronizedList(new LinkedList<>());
+        List<JButton> pieces = board.getPieceSquares(color, board);
+        for(var piece : pieces) {
+            List<JButton> moves = Piece.generateMoves(piece, board);
+            for(var move : moves) {
+                ret.add(new Move(piece,move));
+            }
+        }
+        return ret;
+    }
+
+
+    public static void move(Move move, Board board) {
+        Piece.finalMoveGeneration(move.getInitialSquare(), move.getTargetSquare(), board);
     }
 
 }

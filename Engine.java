@@ -75,26 +75,24 @@ public class Engine {
         }
     }
 
-    public Pair<JButton, JButton, Double> minimaxList(Board board, int depth, double alpha, double beta,
-    boolean maximizingPlayer, List<JButton> pieces) {
+    public Pair<Move, Double, ?> minimaxSingleForLoop(Board board, int depth, double alpha, double beta,
+    boolean maximizingPlayer) {
 if (depth == 0) {
-    return new Pair<>(null, null, evaluate(board));
+    return new Pair<>(null, evaluate(board), null);
 }
 if (maximizingPlayer) {
     double maxEval = Double.NEGATIVE_INFINITY;
-    JButton bestMove = null;
-    JButton correspondingPiece = null;
-    for (var piece : pieces) {
-        List<JButton> moves = Piece.generateMoves(piece, board);
+    Move bestMove = null;
+
+        List<Move> moves = Piece.getMoves(board);
         for (var move : moves) {
-            board.storedMoves.push(piece);
-            board.storedMoves.push(move);
-            Piece.finalMoveGeneration(piece, move, board);
-            double v = minimax(board, depth - 1, alpha, beta, false).d;
+            board.storedMoves.push(move.getInitialSquare());
+            board.storedMoves.push(move.getTargetSquare());
+            Piece.move(move, board);
+            double v = minimaxSingleForLoop(board, depth - 1, alpha, beta, false).e;
             // maxEval = Math.max(maxEval, v);
             if (v > maxEval) {
                 maxEval = v;
-                correspondingPiece = piece;
                 bestMove = move;
             }
             Piece.unmakeMove(board);
@@ -103,25 +101,20 @@ if (maximizingPlayer) {
                 break;
             }
         }
-    }
-
-    return new Pair<>(correspondingPiece, bestMove, maxEval);
+    return new Pair<>(bestMove, maxEval, null);
 } else {
     double minEval = Double.POSITIVE_INFINITY;
-    JButton bestMove = null;
-    JButton correspondingPiece = null;
-    for (var piece : pieces) {
-        List<JButton> moves = Piece.generateMoves(piece, board);
+    Move bestMove = null;
+        List<Move> moves = Piece.getMoves(board);
         for (var move : moves) {
-            board.storedMoves.push(piece);
-            board.storedMoves.push(move);
-            Piece.finalMoveGeneration(piece, move, board);
-            double v = minimax(board, depth - 1, alpha, beta, true).d;
+            board.storedMoves.push(move.getInitialSquare());
+            board.storedMoves.push(move.getTargetSquare());
+            Piece.move(move, board);
+            double v = minimaxSingleForLoop(board, depth - 1, alpha, beta, true).e;
             // minEval = Math.min(minEval, v);
             if (v < minEval) {
                 minEval = v;
                 bestMove = move;
-                correspondingPiece = piece;
             }
             Piece.unmakeMove(board);
             beta = Math.min(beta, v);
@@ -129,8 +122,8 @@ if (maximizingPlayer) {
                 break;
             }
         }
-    }
-    return new Pair<>(correspondingPiece, bestMove, minEval);
+    
+    return new Pair<>(bestMove, minEval, null);
 }
 }
 
@@ -218,27 +211,27 @@ if (maximizingPlayer) {
         return whiteTransformedEval + blackTransformedEval;
     }
 
-    public int getNumPositions(Board board, int depth) {
+    public int getNumPositions(Board board, int depth, boolean isMaximizingPlayer) {
         if (depth == 0) {
             return 1;
         }
-    
         int numPositions = 0;
-    
-        for (var piece : board.getPieces(board)) {
-            List<JButton> moves = Piece.generateMoves(piece, board);
-    
+        List<Move> moves = Piece.getMoves(board);
             for (var move : moves) {
-                board.storedMoves.push(piece);
-                board.storedMoves.push(move);
-    
-                Piece.finalMoveGeneration(piece, move, board);
-                numPositions += getNumPositions(board, depth - 1);
+   
+                Piece.move(move, board);
+                board.storedMoves.push(move.getInitialSquare());
+                board.storedMoves.push(move.getTargetSquare()); 
                 Piece.unmakeMove(board);
-    
-                // Pop the moves outside the inner loop
+                numPositions += getNumPositions(board, depth - 1, isMaximizingPlayer);
+                
             }
-        }
+
+            if (depth == 0) {
+                return 1;
+            }
+            
+        
     
         return numPositions;
     }
