@@ -13,10 +13,10 @@ public class Test {
            Board board = new Board("table", "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", true);
             Thread aiThread = new Thread(() -> {
                 Engine engine = new Engine();
-                    // Pair<Move, Double, ?> pair = engine.minimaxSingleForLoop(board, 2, Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY, true);
+                    Pair<Move, Double, ?> pair = engine.minimaxSingleForLoop(board, 2, Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY, true);
                     // // Piece.finalMoveGeneration(pair.getT(), pair.getE(), board);
                     // // System.out.println("initialSquare: " + Arrays.toString(board.returnIndexes(pair.getT(), board)) + " targetSquare: " + Arrays.toString(board.returnIndexes(pair.getE(),board)));
-                    System.out.println(engine.getNumPositions(board, 1, false));
+                    // System.out.println(engine.getNumPositions(board, 2, false));
             });
             aiThread.start();
             

@@ -649,4 +649,8 @@ public class Piece {
         Piece.finalMoveGeneration(move.getInitialSquare(), move.getTargetSquare(), board);
     }
 
+    public static void moveOrder(Move move, Board board) {
+        Piece.orderedMoves(move.getInitialSquare(), move.getTargetSquare(), board);
+    }
+
 }

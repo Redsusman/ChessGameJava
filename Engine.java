@@ -80,11 +80,11 @@ public class Engine {
 if (depth == 0) {
     return new Pair<>(null, evaluate(board), null);
 }
+List<Move> moves = Piece.getMoves(board);
 if (maximizingPlayer) {
     double maxEval = Double.NEGATIVE_INFINITY;
     Move bestMove = null;
 
-        List<Move> moves = Piece.getMoves(board);
         for (var move : moves) {
             board.storedMoves.push(move.getInitialSquare());
             board.storedMoves.push(move.getTargetSquare());
@@ -105,7 +105,6 @@ if (maximizingPlayer) {
 } else {
     double minEval = Double.POSITIVE_INFINITY;
     Move bestMove = null;
-        List<Move> moves = Piece.getMoves(board);
         for (var move : moves) {
             board.storedMoves.push(move.getInitialSquare());
             board.storedMoves.push(move.getTargetSquare());
@@ -218,7 +217,7 @@ if (maximizingPlayer) {
         int numPositions = 0;
         List<Move> moves = Piece.getMoves(board);
             for (var move : moves) {
-   
+
                 Piece.move(move, board);
                 board.storedMoves.push(move.getInitialSquare());
                 board.storedMoves.push(move.getTargetSquare()); 
