@@ -10,12 +10,11 @@ public class Test {
     public static void main(String[] args) {
         // Create and show the Swing GUI on the EDT
         SwingUtilities.invokeLater(() -> {
-           Board board = new Board("table", "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", true);
+           Board board = new Board("table", "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR ", true);
             Thread aiThread = new Thread(() -> {
                 Engine engine = new Engine();
-                    Pair<Move, Double, ?> pair = engine.minimaxSingleForLoop(board, 4, Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY, true);
-                    Piece.move(pair.getT(), board);
-                    // System.out.println(engine.getNumPositions(board, 2, false));
+                    Pair<Move, Double, ?> pair = engine.minimaxSingleForLoop(board, 2, Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY, false);
+                    System.out.println(Arrays.toString(board.returnIndexes(pair.getT().getInitialSquare(), board)) + " " + Arrays.toString(board.returnIndexes(pair.getT().getTargetSquare(), board)));
             });
             aiThread.start();
             

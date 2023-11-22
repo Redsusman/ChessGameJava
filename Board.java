@@ -73,7 +73,8 @@ public class Board {
                     if (board.clickedMoves.get(0).getComponentCount() != 0) {
                         if (board.clickedMoves.size() - 1 >= 1) {
                             Piece.castle(board.clickedMoves.get(0), board.clickedMoves.get(1), board); 
-                            Piece.orderedMoves(board.clickedMoves.get(0), board.clickedMoves.get(1), board);                 
+                            Piece.orderedMoves(board.clickedMoves.get(0), board.clickedMoves.get(1), board);    
+                            Piece.promote(board);             
                             board.clickedMoves.clear();
                             // System.out.println(Arrays.toString(board.capturedPieces.keySet().iterator().next()));
 
@@ -296,6 +297,16 @@ public class Board {
             ret.add(blackPieces.get(j));
         }
         return ret;
+    }
+
+
+    public void changePiece(Board board, JButton piece, Piece.PieceType changeType) {
+        if(piece.getComponentCount() != 0) {
+            int[] originalCoordsOfPiece = returnIndexes(piece, board);
+            piece.remove(0);
+            loadPieceToBoardd(changeType, originalCoordsOfPiece[1], originalCoordsOfPiece[0], board);
+
+        }
     }
 
 }

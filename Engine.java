@@ -77,8 +77,8 @@ public class Engine {
 
     public Pair<Move, Double, ?> minimaxSingleForLoop(Board board, int depth, double alpha, double beta,
             boolean maximizingPlayer) {
-
         List<Move> moves = Piece.getMoves(board);
+
         if (depth == 0) {
             return new Pair<>(null, evaluate(board), null);
         }
@@ -125,24 +125,18 @@ public class Engine {
         }
     }
 
-    public List<JButton> moveOrderMoves(Color color, Board board) {
-        List<JButton> pieces = board.getPieceSquares(color, board);
-        TreeMap<Integer, JButton> sorter = new TreeMap<>(Comparator.reverseOrder());
-        for (var piece : pieces) {
+    public List<Move> moveOrderMoves(List<Move> moves, Board board) {
+        TreeMap<Integer, Move> sorter = new TreeMap<>(Comparator.reverseOrder());
             int i = 0;
-            List<JButton> moves = Piece.generateMoves(piece, board);
             for (var move : moves) {
-                if (Piece.isCapture(piece, move, board)) {
-                    int value = board.getFlagIndivSquare(move).value;
+                if (Piece.isCapture(move.getInitialSquare(), move.getTargetSquare(), board)) {
+                    int value = board.getFlagIndivSquare(move.getTargetSquare()).value;
                     sorter.put(value, move);
                 } else {
-                    System.out.println('k');
                     sorter.put(i--, move);
                 }
             }
-        }
-        System.out.println(sorter.size());
-        List<JButton> moveOrderedList = new LinkedList<>(sorter.values());
+        List<Move> moveOrderedList = new LinkedList<>(sorter.values());
         return moveOrderedList;
     }
 

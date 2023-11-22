@@ -91,10 +91,10 @@ public class Piece {
             targetSquare.remove(0);
             board.capturedPieces.push(new Pair<>(board.returnIndexes(targetSquare, board)[1],
                     board.returnIndexes(targetSquare, board)[0], board.getFlagIndivSquare(targetSquare)));
-            //         board.storedMoves.push(initialSquare);
+            // board.storedMoves.push(initialSquare);
             // board.storedMoves.push(targetSquare);
             moveTo(initialSquare, targetSquare, board);
-            
+
         } else if (targetSquare.getComponentCount() == 0) {
             // try {
             // playSound("imageFolder/351518__mh2o__chess_move_on_alabaster.wav");
@@ -120,7 +120,7 @@ public class Piece {
                 Pair<Integer, Integer, Piece.PieceType> capturedPieceData = board.capturedPieces.pop();
                 board.loadPieceToBoardd(capturedPieceData.getD(), capturedPieceData.getT(), capturedPieceData.getE(),
                         board);
-                
+
             }
         }
     }
@@ -543,24 +543,21 @@ public class Piece {
         }
     }
 
-    public static void promote(Board board, JButton square) {
-        if (square.getComponentCount() != 0) {
-            if (board.getFlagIndivSquare(square).flag == "p" && board.returnIndexes(square, board)[0] == 7
-                    || board.returnIndexes(square, board)[0] == 0) {
-                Color color = board.getFlagIndivSquare(square).color;
-                if (color == Color.WHITE) {
-                    board.loadPieceToBoardd(Piece.PieceType.WHITE_QUEEN, board.returnIndexes(square, board)[0],
-                            board.returnIndexes(square, board)[1], board);
-                } else {
-                    board.loadPieceToBoardd(Piece.PieceType.BLACK_QUEEN, board.returnIndexes(square, board)[0],
-                            board.returnIndexes(square, board)[1], board);
-                }
-                square.remove(0);
-            } else {
-                return;
-            }
-        } else {
-            return;
+    public static void promote(Board board) {
+        List<JButton> squares = board.getPieces(board);
+        for (var square : squares) {
+                if (board.getFlagIndivSquare(square).flag == "p" && (board.returnIndexes(square, board)[0] == 7
+                        || board.returnIndexes(square, board)[0] == 0)) {
+                            System.out.println("hello");
+                    Color color = board.getFlagIndivSquare(square).color;
+                    if (color == Color.WHITE) {
+                        board.changePiece(board, square, PieceType.WHITE_QUEEN);
+                        break;
+                    } else {
+                        board.changePiece(board, square, PieceType.BLACK_QUEEN);
+                        break;
+                    }
+                } 
         }
     }
 
@@ -623,10 +620,10 @@ public class Piece {
     public static List<Move> getMoves(Board board) {
         List<Move> ret = Collections.synchronizedList(new LinkedList<>());
         List<JButton> pieces = board.getPieces(board);
-        for(var piece : pieces) {
+        for (var piece : pieces) {
             List<JButton> moves = Piece.generateMoves(piece, board);
-            for(var move : moves) {
-                ret.add(new Move(piece,move));
+            for (var move : moves) {
+                ret.add(new Move(piece, move));
             }
         }
         return ret;
@@ -635,15 +632,14 @@ public class Piece {
     public static List<Move> getColorMoves(Board board, Color color) {
         List<Move> ret = Collections.synchronizedList(new LinkedList<>());
         List<JButton> pieces = board.getPieceSquares(color, board);
-        for(var piece : pieces) {
+        for (var piece : pieces) {
             List<JButton> moves = Piece.generateMoves(piece, board);
-            for(var move : moves) {
-                ret.add(new Move(piece,move));
+            for (var move : moves) {
+                ret.add(new Move(piece, move));
             }
         }
         return ret;
     }
-
 
     public static void move(Move move, Board board) {
         Piece.finalMoveGeneration(move.getInitialSquare(), move.getTargetSquare(), board);
