@@ -76,57 +76,54 @@ public class Engine {
     }
 
     public Pair<Move, Double, ?> minimaxSingleForLoop(Board board, int depth, double alpha, double beta,
-    boolean maximizingPlayer) {
-if (depth == 0) {
-    return new Pair<>(null, evaluate(board), null);
-}
-List<Move> moves = Piece.getMoves(board);
-if (maximizingPlayer) {
-    double maxEval = Double.NEGATIVE_INFINITY;
-    Move bestMove = null;
+            boolean maximizingPlayer) {
 
-        for (var move : moves) {
-            board.storedMoves.push(move.getInitialSquare());
-            board.storedMoves.push(move.getTargetSquare());
-            Piece.move(move, board);
-            double v = minimaxSingleForLoop(board, depth - 1, alpha, beta, false).e;
-            // maxEval = Math.max(maxEval, v);
-            if (v > maxEval) {
-                maxEval = v;
-                bestMove = move;
-            }
-            Piece.unmakeMove(board);
-            alpha = Math.max(alpha, v);
-            if (beta <= alpha) {
-                break;
-            }
+        List<Move> moves = Piece.getMoves(board);
+        if (depth == 0) {
+            return new Pair<>(null, evaluate(board), null);
         }
-    return new Pair<>(bestMove, maxEval, null);
-} else {
-    double minEval = Double.POSITIVE_INFINITY;
-    Move bestMove = null;
-        for (var move : moves) {
-            board.storedMoves.push(move.getInitialSquare());
-            board.storedMoves.push(move.getTargetSquare());
-            Piece.move(move, board);
-            double v = minimaxSingleForLoop(board, depth - 1, alpha, beta, true).e;
-            // minEval = Math.min(minEval, v);
-            if (v < minEval) {
-                minEval = v;
-                bestMove = move;
-            }
-            Piece.unmakeMove(board);
-            beta = Math.min(beta, v);
-            if (beta <= alpha) {
-                break;
-            }
-        }
-    
-    return new Pair<>(bestMove, minEval, null);
-}
-}
+        if (maximizingPlayer) {
+            double maxEval = Double.NEGATIVE_INFINITY;
+            Move bestMove = null;
 
-   
+            for (var move : moves) {
+                board.storedMoves.push(move.getInitialSquare());
+                board.storedMoves.push(move.getTargetSquare());
+                Piece.move(move, board);
+                double v = minimaxSingleForLoop(board, depth - 1, alpha, beta, false).e;
+                if (v > maxEval) {
+                    maxEval = v;
+                    bestMove = move;
+                }
+                Piece.unmakeMove(board);
+                alpha = Math.max(alpha, v);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return new Pair<>(bestMove, maxEval, null);
+        } else {
+            double minEval = Double.POSITIVE_INFINITY;
+            Move bestMove = null;
+            for (var move : moves) {
+                board.storedMoves.push(move.getInitialSquare());
+                board.storedMoves.push(move.getTargetSquare());
+                Piece.move(move, board);
+                double v = minimaxSingleForLoop(board, depth - 1, alpha, beta, true).e;
+                if (v < minEval) {
+                    minEval = v;
+                    bestMove = move;
+                }
+                Piece.unmakeMove(board);
+                beta = Math.min(beta, v);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+
+            return new Pair<>(bestMove, minEval, null);
+        }
+    }
 
     public List<JButton> moveOrderMoves(Color color, Board board) {
         List<JButton> pieces = board.getPieceSquares(color, board);
@@ -168,7 +165,6 @@ if (maximizingPlayer) {
         }
     }
 
-    
     public double evaluate(Board board) {
         double whiteVal = 0;
         double blackVal = 0;
@@ -216,22 +212,20 @@ if (maximizingPlayer) {
         }
         int numPositions = 0;
         List<Move> moves = Piece.getMoves(board);
-            for (var move : moves) {
+        for (var move : moves) {
 
-                Piece.move(move, board);
-                board.storedMoves.push(move.getInitialSquare());
-                board.storedMoves.push(move.getTargetSquare()); 
-                Piece.unmakeMove(board);
-                numPositions += getNumPositions(board, depth - 1, isMaximizingPlayer);
-                
-            }
+            Piece.move(move, board);
+            board.storedMoves.push(move.getInitialSquare());
+            board.storedMoves.push(move.getTargetSquare());
+            Piece.unmakeMove(board);
+            numPositions += getNumPositions(board, depth - 1, isMaximizingPlayer);
 
-            if (depth == 0) {
-                return 1;
-            }
-            
-        
-    
+        }
+
+        if (depth == 0) {
+            return 1;
+        }
+
         return numPositions;
     }
 
@@ -244,9 +238,7 @@ if (maximizingPlayer) {
             blackVal -= Math.abs(Piece.BLACK_MATERIAL - Piece.WHITE_MATERIAL);
         }
 
-        return (whiteVal/2) + (blackVal/2);
+        return (whiteVal / 2) + (blackVal / 2);
     }
-    
-    
-}
 
+}
